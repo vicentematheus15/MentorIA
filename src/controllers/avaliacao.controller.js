@@ -1,8 +1,9 @@
 import dotenv from 'dotenv';
-import { GoogleGenAI } from '@google/genai';
+import {  } from '@google/genai';
+
+dotenv.config(); // Carrega variáveis do .env
 
 export const gerar = async (req, res) => {
-  dotenv.config(); // Carrega variáveis do .env
 
   try {
     const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_KEY });
