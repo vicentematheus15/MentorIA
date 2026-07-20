@@ -13,10 +13,12 @@ export const Avaliacao_diagnostica = sequelize.define('Avaliacao_diagnostica',
         allowNull: false
        },
        opcoes:{
-        type: DataTypes.ARRAY
+        type: DataTypes.ARRAY(DataTypes.STRING),
+        allowNull: false
        },
        gabarito:{
-        type: DataTypes.INTEGER
+        type: DataTypes.INTEGER,
+        allowNull: false
        },
        topico:{
         type: DataTypes.STRING
@@ -26,7 +28,7 @@ export const Avaliacao_diagnostica = sequelize.define('Avaliacao_diagnostica',
 
        },
        dificuldade:{
-
+        type: DataTypes.STRING
        }
 
     }, {
@@ -34,3 +36,4 @@ export const Avaliacao_diagnostica = sequelize.define('Avaliacao_diagnostica',
         timestamps: true,
     }
 )
+export default Avaliacao_diagnostica;

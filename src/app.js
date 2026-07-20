@@ -9,8 +9,8 @@ import { limitadorGlobal } from './config/rateLimit.js';
 import { helmetConfig } from './config/helmet.js';
 import { corsConfig } from './config/cors.js';
 
-//importa o model para garantir registro no sequelize
-import './models/usuario.model.js';
+//importa o model para garantir registros no sequelize
+import './models/index.model.js';
 
 const app = express();
 

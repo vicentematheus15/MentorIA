@@ -1,12 +1,10 @@
-import dotenv from 'dotenv';
-import {  } from '@google/genai';
+import Groq from "groq-sdk";
 
-dotenv.config(); // Carrega variáveis do .env
+const goq = new Groq({ apiKey: process.env.GEMINI_KEY });
 
 export const gerar = async (req, res) => {
-
+  
   try {
-    const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_KEY });
     const { tipo, dificuldade } = req.body;
 
     const trilha = {
@@ -92,12 +90,15 @@ export const gerar = async (req, res) => {
 
     console.log(user);
 
-    const novaAvaliacao = await ai.models.generateContent({
-      model: "gemini-3.5-flash",
-      contents: system + user,
+    const resposta = await groq.chat.completions.create({
+      messages: [
+        { role: "system", content: system },
+        { role: "user", content: user }
+      ],
+      response_format: { type: "json_object" },
     });
 
-    console.log(novaAvaliacao.text);
+    
 
     res.status(200).json({
       mensagem: "Avaliação criada com sucesso",
