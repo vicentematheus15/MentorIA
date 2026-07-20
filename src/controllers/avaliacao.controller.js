@@ -81,7 +81,7 @@ export const gerar = async (req, res) => {
 
     const user =
       `Gere uma avaliação ${tipo === "diagnostica" ? "DIAGNÓSTICA" : "DE PROGRESSO"} ` +
-      `com 2 questões objetivas, dificuldade predominante "${dificuldade}", ` +
+      `com 10 questões objetivas, dificuldade predominante "${dificuldade}", ` +
       `para a trilha "${trilha.titulo}".\n` +
       `Descrição da trilha: ${trilha.descricao || "sem descrição"}\n` +
       `Competências: ${JSON.stringify(trilha.competencias || [])}\n` +
