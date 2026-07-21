@@ -3,7 +3,7 @@ import sequelize from './database/database.js';
 import express from 'express';
 import authRoutes from './routes/auth.routes.js';
 import usuarioRoutes from './routes/usuario.routes.js';
-import avaliacaoRoutes from './routes/avaliacao.routes.js';
+import avaliacaoRoutes from './routes/plano.routes.js';
 import cors from 'cors';
 import { limitadorGlobal } from './config/rateLimit.js';
 import { helmetConfig } from './config/helmet.js';
@@ -22,7 +22,7 @@ app.use(express.json());
 
 app.use('/auth', authRoutes);
 app.use('/usuario', usuarioRoutes);
-app.use('/avaliacao', avaliacaoRoutes)
+app.use('/planos', avaliacaoRoutes)
 
 sequelize.sync({alter: true}).then(() => {
     app.listen(process.env.API_PORT, () => 
