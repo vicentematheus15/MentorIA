@@ -88,7 +88,6 @@ export const gerar = async (req, res) => {
       `Habilidades: ${JSON.stringify(trilha.habilidades || [])}\n` +
       `Distribua as questões entre os tópicos/habilidades. Apenas JSON na resposta.`;
 
-    console.log(user);
 
     const resposta = await groq.chat.completions.create({
       messages: [
@@ -98,7 +97,30 @@ export const gerar = async (req, res) => {
       response_format: { type: "json_object" },
     });
 
+    //pega o texto que aia devolveu de dentro do array resposta.choices
+    const conteudo = resposta.choices[0].message.content;
+
+    //cria a variavel que vai receber o objeto
+    let avaliacaoGerada;
     
+    // transforma o texto em objeto (parse), em um trycatch separado para se der errado nao voltar um 500 genérico
+    try {
+      avaliacaoGerada = JSON.parse(conteudo);
+    } catch (parseError) {
+      return res.status(502).json({
+        erro: "IA retornou um formato inválido",
+        detalhes: conteudo
+      });
+    }
+
+    //depois de validar que é um json, é preciso garantir que seja exatamente o json que nossa api está esperando 
+    if(!Array.isArray(avaliacaoGerada.questoes) || avaliacaoGerada.questoes.length === 0){
+      return res.status(502).json({
+        erro: "IA não retornou questões no formato esperado",
+        detalhes: avaliacaoGerada
+      })
+    }
+
 
     res.status(200).json({
       mensagem: "Avaliação criada com sucesso",
