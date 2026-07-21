@@ -1,4 +1,5 @@
 import Groq from "groq-sdk";
+import Avaliacao_diagnostica from "../models/avaliacao.model";
 
 const goq = new Groq({ apiKey: process.env.GEMINI_KEY });
 
@@ -121,10 +122,36 @@ export const gerar = async (req, res) => {
       })
     }
 
+    //map gera um novo objeto com os dados que serao armazenados no banco, com os nomes exatos que omodel espera
+    const registros = avaliacaoGerada.questoes.map((questao) => ({
+      enunciado: questao.enunciado,
+      opcoes: questao.opcoes,
+      gabarito: questao.gabarito,
+      topicos: questao.topicos,
+      habilidade: questao.habilidade,
+      dificuldade: questao.dificuldade,
+      usuarioId: req.usuario.id,  // aqui é o id do usuario que mandou a requisição, assim que da pra saber d equem é aquela diagnostica por exemplo
+    }));
 
+    //armazena de fato todos os objetos no banco | bulkcreate insere todo o array no banco (mais eficiente para loops, por nao ter que ir 10x no banco inserir um de cada vez)
+    const questoesSalvas = await Avaliacao_diagnostica.bulkCreate(registros, {
+      returning: true, //faz o INSERT devolver as linhas criadas, incluido o id com autoincrement que ele gerou para cada questão (isso é necessário para montar a resposta)
+    });
+
+    //monta a resposta final para o usuário, sem o gabarito e sem o ID (por questão de segurança)
+    const questoesParaUsuario = questoesSalvas.map((questao) => ({
+      id: questao.id,
+      enunciado: questao.enunciado,
+      opcoes: questao.opcoes,
+      topico: questao.topico,
+      habilidade: questao.habilidade,
+      dificuldade: questao.dificuldade,
+    }));
+
+    //resposta final para o usuario
     res.status(200).json({
       mensagem: "Avaliação criada com sucesso",
-      avaliacao: novaAvaliacao.text,
+      avaliacao: questoesParaUsuario,
     });
   } catch (err) {
     res.status(400).json({
