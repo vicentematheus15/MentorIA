@@ -1,5 +1,5 @@
 import Groq from "groq-sdk";
-import Avaliacao_diagnostica from "../models/avaliacao.model.js";
+import {Avaliacao_diagnostica} from "../models/avaliacao.model.js";
 
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
@@ -76,7 +76,7 @@ export const gerar = async (req, res) => {
     const system =
       'Você é um avaliador pedagógico. Gere avaliações em JSON estrito, sem texto fora do JSON. ' +
       'Cada questão deve ter: id (número sequencial), enunciado (text), opcoes (array com 4 alternativas), ' +
-      'correta (0-3), topico (string), habilidade (string), dificuldade ("iniciante"|"intermediario"|"avancado"). ' +
+      'gabarito (0-3), topico (string), habilidade (string), dificuldade ("iniciante"|"intermediario"|"avancado"). ' +
       'O JSON raiz deve ter o formato: { "questoes": [...] }.';
 
     const user =
@@ -123,12 +123,12 @@ export const gerar = async (req, res) => {
       })
     }
 
-    //map gera um novo objeto com os dados que serao armazenados no banco, com os nomes exatos que omodel espera
+    //map gera um novo objeto com os dados que serao armazenados no banco, garante que tenha os nomes exatos que model espera
     const registros = avaliacaoGerada.questoes.map((questao) => ({
       enunciado: questao.enunciado,
       opcoes: questao.opcoes,
       gabarito: questao.gabarito,
-      topicos: questao.topicos,
+      topico: questao.topico,
       habilidade: questao.habilidade,
       dificuldade: questao.dificuldade,
       usuarioId: req.usuario.id,  // aqui é o id do usuario que mandou a requisição, assim que da pra saber d equem é aquela diagnostica por exemplo
@@ -144,7 +144,7 @@ export const gerar = async (req, res) => {
       id: questao.id,
       enunciado: questao.enunciado,
       opcoes: questao.opcoes,
-      topico: questao.topicos,
+      topico: questao.topico,
       habilidade: questao.habilidade,
       dificuldade: questao.dificuldade,
     }));

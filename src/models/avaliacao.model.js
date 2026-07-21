@@ -29,8 +29,12 @@ export const Avaliacao_diagnostica = sequelize.define('Avaliacao_diagnostica',
        },
        dificuldade:{
         type: DataTypes.STRING
+       },
+       //'diagnostica', 'progresso'
+       tipo: {
+        type: DataTypes.STRING,
+        allowNull: false
        }
-
     }, {
         tableName: 'avaliacao_diagnostica',
         timestamps: true,
