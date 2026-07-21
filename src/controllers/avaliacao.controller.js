@@ -1,7 +1,7 @@
 import Groq from "groq-sdk";
-import Avaliacao_diagnostica from "../models/avaliacao.model";
+import Avaliacao_diagnostica from "../models/avaliacao.model.js";
 
-const goq = new Groq({ apiKey: process.env.GEMINI_KEY });
+const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
 export const gerar = async (req, res) => {
   
@@ -91,6 +91,7 @@ export const gerar = async (req, res) => {
 
 
     const resposta = await groq.chat.completions.create({
+      model: "openai/gpt-oss-120b",
       messages: [
         { role: "system", content: system },
         { role: "user", content: user }
@@ -126,7 +127,7 @@ export const gerar = async (req, res) => {
     const registros = avaliacaoGerada.questoes.map((questao) => ({
       enunciado: questao.enunciado,
       opcoes: questao.opcoes,
-      gabarito: questao.gabarito,
+      gabarito: questao.correta,
       topicos: questao.topicos,
       habilidade: questao.habilidade,
       dificuldade: questao.dificuldade,
@@ -138,7 +139,7 @@ export const gerar = async (req, res) => {
       returning: true, //faz o INSERT devolver as linhas criadas, incluido o id com autoincrement que ele gerou para cada questão (isso é necessário para montar a resposta)
     });
 
-    //monta a resposta final para o usuário, sem o gabarito e sem o ID (por questão de segurança)
+    //monta a resposta final para o usuário, sem o gabarito e sem o ID do usuario (por questão de segurança) mas com o id da questão
     const questoesParaUsuario = questoesSalvas.map((questao) => ({
       id: questao.id,
       enunciado: questao.enunciado,
