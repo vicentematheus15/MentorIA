@@ -89,7 +89,7 @@ export const gerar = async (req, res) => {
       `Habilidades: ${JSON.stringify(trilha.habilidades || [])}\n` +
       `Distribua as questões entre os tópicos/habilidades. Apenas JSON na resposta.`;
 
-
+    //chamada da IA do groq
     const resposta = await groq.chat.completions.create({
       model: "openai/gpt-oss-120b",
       messages: [
@@ -127,7 +127,7 @@ export const gerar = async (req, res) => {
     const registros = avaliacaoGerada.questoes.map((questao) => ({
       enunciado: questao.enunciado,
       opcoes: questao.opcoes,
-      gabarito: questao.correta,
+      gabarito: questao.gabarito,
       topicos: questao.topicos,
       habilidade: questao.habilidade,
       dificuldade: questao.dificuldade,
@@ -144,7 +144,7 @@ export const gerar = async (req, res) => {
       id: questao.id,
       enunciado: questao.enunciado,
       opcoes: questao.opcoes,
-      topico: questao.topico,
+      topico: questao.topicos,
       habilidade: questao.habilidade,
       dificuldade: questao.dificuldade,
     }));
