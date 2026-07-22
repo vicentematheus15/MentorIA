@@ -1,0 +1,94 @@
+{
+  "titulo": "Formação JavaScript e Node.js para Backend",
+  "descricao": "Trilha completa para dominar JavaScript do zero ao avançado, com foco em desenvolvimento back-end: ambiente Node.js, construção de APIs, persistência de dados e boas práticas de arquitetura de código para o mercado de trabalho.",
+  "competencias": [
+    "Resolução de problemas lógicos utilizando algoritmos estruturados em JavaScript.",
+    "Desenvolvimento de APIs e serviços back-end utilizando Node.js.",
+    "Persistência e manipulação de dados em bancos relacionais.",
+    "Integração de aplicações com serviços e APIs externas de terceiros.",
+    "Aplicação de boas práticas de programação, segurança e padrões de projeto modernos (ES6+)."
+  ],
+  "habilidades": [
+    "Criar e manipular estruturas de dados complexas como arrays e objetos.",
+    "Gerenciar o fluxo assíncrono de dados com Promises e Async/Await.",
+    "Construir e documentar rotas de API seguindo o padrão REST.",
+    "Modelar e consultar dados em um banco relacional utilizando um ORM.",
+    "Consumir e integrar APIs externas de forma resiliente, tratando falhas e autenticação entre sistemas.",
+    "Modularizar código JavaScript para reutilização e manutenção.",
+    "Implementar autenticação e proteger rotas sensíveis de uma aplicação."
+  ],
+  "topicos": [
+    {
+      "nome": "Fundamentos da Linguagem",
+      "aulas": [
+        "Variáveis (let, const) e Escopo",
+        "Tipos de Dados e Operadores",
+        "Estruturas Condicionais (if, switch)",
+        "Laços de Repetição (for, while)"
+      ]
+    },
+    {
+      "nome": "JavaScript Moderno (ES6+)",
+      "aulas": [
+        "Arrow Functions",
+        "Desestruturação (Destructuring)",
+        "Operadores Rest e Spread",
+        "Métodos de Array (map, filter, reduce)"
+      ]
+    },
+    {
+      "nome": "Ambiente Node.js",
+      "aulas": [
+        "O Event Loop no lado do servidor",
+        "Sistema de Módulos (CommonJS e ES Modules)",
+        "NPM e Gerenciamento de Pacotes",
+        "Variáveis de Ambiente e Configuração"
+      ]
+    },
+    {
+      "nome": "Programação Assíncrona",
+      "aulas": [
+        "Callbacks e suas limitações",
+        "Trabalhando com Promises",
+        "Async e Await",
+        "Tratamento de Erros (try/catch)"
+      ]
+    },
+    {
+      "nome": "Construção de APIs REST",
+      "aulas": [
+        "Protocolo HTTP e Métodos (GET, POST, PUT, DELETE)",
+        "Roteamento e Middlewares com Express",
+        "Validação de Dados de Entrada",
+        "Formato JSON e Códigos de Status HTTP"
+      ]
+    },
+    {
+      "nome": "Integração de Sistemas",
+      "aulas": [
+        "Consumindo APIs Externas (Fetch/Axios)",
+        "Autenticação entre Sistemas (API Keys, OAuth)",
+        "Webhooks e Comunicação Orientada a Eventos",
+        "Tratamento de Falhas e Timeouts em Integrações"
+      ]
+    },
+    {
+      "nome": "Persistência de Dados",
+      "aulas": [
+        "Bancos de Dados Relacionais e SQL Básico",
+        "Modelagem de Dados com um ORM",
+        "Relacionamentos entre Tabelas",
+        "Migrations e Versionamento de Schema"
+      ]
+    },
+    {
+      "nome": "Autenticação e Segurança",
+      "aulas": [
+        "Hashing de Senhas",
+        "Autenticação com JWT",
+        "Proteção de Rotas Privadas",
+        "Boas Práticas de Segurança em APIs"
+      ]
+    }
+  ]
+}
