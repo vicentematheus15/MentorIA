@@ -6,9 +6,10 @@ import { limitadorListarPlanos, limitadorGerarDiagnostica, limitadorGerarProgres
 
 const planoRoutes = Router();
 
-planoRoutes.get('/', limitadorListarPlanos, autenticar, controller.listar)
+planoRoutes.get('/', limitadorListarPlanos, autenticar, controller.listar);
 planoRoutes.post('/diagnostica', autenticar, controller.gerar);
-planoRoutes
-planoRoutes
-planoRoutes
+planoRoutes.post('/:id/progresso', limitadorGerarProgresso, autenticar, controller.gerarProgresso);
+planoRoutes.post('/:id/diagnostica/enviar', limitadorEnviarDiagnostica, autenticar, controller.enviarDiagnostica);
+planoRoutes.post('/:id/progresso/enviar', limitadorEnviarProgresso, autenticar, controller.enviarProgresso);
+
 export default avaliacaoRoutes;
