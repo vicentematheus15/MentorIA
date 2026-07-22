@@ -1,5 +1,8 @@
-// Controller provisório — cada função abaixo será implementada na próxima etapa.
-// Por enquanto, só garante que as rotas existem e respondem de forma previsível.
+import trilha from '../data/trilha.json' with { type: 'json' };
+import Groq from "groq-sdk";
+import {Avaliacao_diagnostica} from "../models/avaliacao.model.js";
+
+const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
 export const listar = async (req, res) => {
   res.status(501).json({ erro: "Ainda não implementado: listar" });
