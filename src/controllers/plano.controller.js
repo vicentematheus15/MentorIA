@@ -36,6 +36,7 @@ export const gerarDiagnostica = async (req, res) => {
       `Habilidades: ${JSON.stringify(trilha.habilidades || [])}\n` +
       `Distribua as questões entre os tópicos/habilidades. Apenas JSON na resposta.`;
 
+    //chamada da IA do groq
     const resposta = await groq.chat.completions.create({
       model: "openai/gpt-oss-120b",
       messages: [
@@ -45,9 +46,13 @@ export const gerarDiagnostica = async (req, res) => {
       response_format: { type: "json_object" },
     });
 
+    //pega o texto que aia devolveu de dentro do array resposta.choices
     const conteudo = resposta.choices[0].message.content;
 
+    //cria a variavel que vai receber o objeto
     let avaliacaoGerada;
+
+    // transforma o texto em objeto (parse), em um trycatch separado para se der errado nao voltar um 500 genérico
     try {
       avaliacaoGerada = JSON.parse(conteudo);
     } catch (parseError) {
@@ -57,6 +62,7 @@ export const gerarDiagnostica = async (req, res) => {
       });
     }
 
+    //depois de validar que é um json, é preciso garantir que seja exatamente o json que nossa api está esperando
     if (!Array.isArray(avaliacaoGerada.questoes) || avaliacaoGerada.questoes.length === 0) {
       return res.status(502).json({
         erro: "IA não retornou questões no formato esperado",
