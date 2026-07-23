@@ -2,6 +2,7 @@ import Groq from "groq-sdk";
 import trilha from "../data/trilha.json" with { type: "json" };
 import { Plano, Avaliacao_diagnostica } from "../models/index.model.js";
 import sequelize from "../database/database.js";
+import { where } from "sequelize";
 
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
@@ -9,7 +10,20 @@ const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 // Por enquanto, só garante que as rotas existem e respondem de forma previsível.
 
 export const listar = async (req, res) => {
-  res.status(501).json({ erro: "Ainda não implementado: listar" });
+  try {
+    const planos = await Plano.findAll({
+      where: { usuario: req.usuario.id },
+      order: [["createdat", "DESC"]],
+      attributes: ["id", "trilhaTitulo", "status", "createdAt"],
+    });
+
+    res.status(200).json({ planos });
+  } catch (err) {
+    res.status(400).json({
+      erro: "erro ao listar planos",
+      detalhes: err.message,
+    });
+  }
 };
 
 export const gerarDiagnostica = async (req, res) => {
