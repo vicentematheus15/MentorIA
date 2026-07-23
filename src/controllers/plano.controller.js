@@ -1,6 +1,7 @@
 import Groq from "groq-sdk";
 import trilha from "../data/trilha.json" with { type: "json" };
 import { Plano, Avaliacao_diagnostica } from "../models/index.model.js";
+import sequelize from "../database/database.js";
 
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
@@ -12,13 +13,15 @@ export const listar = async (req, res) => {
 };
 
 export const gerarDiagnostica = async (req, res) => {
+  const t = await sequelize.transaction(); // abre a transação: nada é gravado de verdade até o commit
+
   try {
     // cria o plano primeiro — é ele que vai "dar identidade" a essas questões
     const plano = await Plano.create({
       usuarioId: req.usuario.id,
       trilhaTitulo: trilha.titulo,
       status: "diagnostico_gerado",
-    });
+    }, { transaction: t }); // marca essa escrita como parte da transação t
 
     const system =
       "Você é um avaliador pedagógico. Gere avaliações em JSON estrito, sem texto fora do JSON. " +
@@ -84,8 +87,12 @@ export const gerarDiagnostica = async (req, res) => {
 
     //armazena de fato todos os objetos no banco | bulkcreate insere todo o array no banco (mais eficiente para loops, por nao ter que ir 10x no banco inserir um de cada vez)
     const questoesSalvas = await Avaliacao_diagnostica.bulkCreate(registros, {
+      transaction: t, // mesma transação do Plano.create acima
       returning: true, //faz o INSERT devolver as linhas criadas, incluido o id com autoincrement que ele gerou para cada questão (isso é necessário para montar a resposta)
     });
+
+    // as duas escritas (plano + questões) foram bem — confirma as duas de vez
+    await t.commit();
 
     //monta a resposta final para o usuário, sem o gabarito e sem o ID do usuario (por questão de segurança) mas com o id da questão
     const questoesParaUsuario = questoesSalvas.map((questao) => ({
@@ -104,6 +111,10 @@ export const gerarDiagnostica = async (req, res) => {
       questoes: questoesParaUsuario,
     });
   } catch (err) {
+    if (!t.finished){
+      await t.rollback(); //só desfaz se a transação ainda não foi encerrada (evita erro em cima de erro)
+    }
+    
     res.status(400).json({
       erro: "Erro ao gerar avaliação diagnóstica",
       detalhes: err.message,
