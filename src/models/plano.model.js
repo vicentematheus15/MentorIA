@@ -1,7 +1,7 @@
 import sequelize from "../database/database.js";
 import { DataTypes } from "sequelize";
 
-export const Plano = sequelize.define(Plano,
+export const Plano = sequelize.define('Plano',
     {
         id: {
             type: DataTypes.INTEGER,
