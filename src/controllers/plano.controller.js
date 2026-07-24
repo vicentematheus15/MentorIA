@@ -330,5 +330,68 @@ export const enviarDiagnostica = async (req, res) => {
 };
 
 export const enviarProgresso = async (req, res) => {
-  res.status(501).json({ erro: "Ainda não implementado: enviarProgresso" });
+ try {
+    const { id } = req.params;
+    const { respostas } = req.body;
+ 
+    const plano = await Plano.findByPk(id);
+ 
+    if (!plano) {
+      return res.status(404).json({ erro: "Plano não encontrado" });
+    }
+ 
+    if (plano.usuarioId !== req.usuario.id) {
+      return res.status(403).json({ erro: "Esse plano não pertence a você" });
+    }
+ 
+    if (plano.status !== "progresso_gerado") {
+      return res.status(409).json({
+        erro: "O progresso desse plano já foi corrigido, ou ainda não foi gerado",
+      });
+    }
+ 
+    const questoes = await Avaliacao_diagnostica.findAll({
+      where: { planoId: plano.id, tipo: "progresso" },
+    });
+ 
+    const idsEsperados = new Set(questoes.map((q) => q.id));
+    const idsRecebidos = new Set(respostas.map((r) => r.questaoId));
+ 
+    const mesmoConjunto =
+      idsEsperados.size === idsRecebidos.size &&
+      [...idsEsperados].every((idEsperado) => idsRecebidos.has(idEsperado));
+ 
+    if (!mesmoConjunto) {
+      return res.status(400).json({
+        erro: "As respostas enviadas não correspondem exatamente às questões desse plano",
+      });
+    }
+ 
+    const respostasPorId = new Map(respostas.map((r) => [r.questaoId, r.resposta]));
+ 
+    const { nivel, percentual, pontosObtidos, pontosPossiveis, detalhes } = calcularNivel(
+      questoes,
+      respostasPorId
+    );
+ 
+    plano.status = "progresso_corrigido";
+    plano.nivel = nivel; // nível é atualizado com a medição mais recente
+    await plano.save();
+ 
+    res.status(200).json({
+      mensagem: "Progresso corrigido com sucesso",
+      plano: { id: plano.id, status: plano.status, nivel: plano.nivel },
+      pontuacao: {
+        acertosPonderados: pontosObtidos,
+        totalPonderado: pontosPossiveis,
+        percentual: Math.round(percentual * 100),
+      },
+      correcao: detalhes,
+    });
+  } catch (err) {
+    res.status(400).json({
+      erro: "Erro ao corrigir avaliação de progresso",
+      detalhes: err.message,
+    });
+  }
 };
