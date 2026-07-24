@@ -5,7 +5,16 @@ const PESO_DIFICULDADE = {
   avancado: 3,
 };
 
-/**
+// nível geral do plano (1-5) -> dificuldade predominante da próxima avaliação (progresso)
+export const NIVEL_PARA_DIFICULDADE = {
+  1: "iniciante",
+  2: "iniciante",
+  3: "intermediario",
+  4: "intermediario",
+  5: "avancado",
+};
+
+/*
  * Calcula o nível (1 a 5) a partir das questões salvas e das respostas do usuário.
  * @param {Array} questoes - registros do banco, cada um com { id, gabarito, dificuldade, enunciado }
  * @param {Map<number, number>} respostasPorId - questaoId -> alternativa escolhida pelo usuário
