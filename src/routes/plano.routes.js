@@ -12,4 +12,4 @@ planoRoutes.post('/:id/progresso', limitadorGerarProgresso, autenticar, controll
 planoRoutes.post('/:id/diagnostica/enviar', limitadorEnviarDiagnostica, autenticar, controller.enviarDiagnostica);
 planoRoutes.post('/:id/progresso/enviar', limitadorEnviarProgresso, autenticar, controller.enviarProgresso);
 
-export default avaliacaoRoutes;
+export default planoRoutes;
