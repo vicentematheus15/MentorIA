@@ -17,6 +17,11 @@ export const Plano = sequelize.define('Plano',
             type: DataTypes.STRING,
             allowNull: false,
             defaultValue: 'diagnostico_gerado'
+        },
+        // nível geral do usuário nesse plano, de 1 a 5 — calculado após a correção da diagnóstica
+        nivel: {
+            type: DataTypes.INTEGER,
+            allowNull: true
         }
     }, {
         tableName: 'planos',

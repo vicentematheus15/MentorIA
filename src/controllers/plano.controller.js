@@ -2,6 +2,7 @@ import Groq from "groq-sdk";
 import trilha from "../data/trilha.json" with { type: "json" };
 import { Plano, Avaliacao_diagnostica } from "../models/index.model.js";
 import sequelize from "../database/database.js";
+import { calcularNivel } from "../utils/nivel.js";
 
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
