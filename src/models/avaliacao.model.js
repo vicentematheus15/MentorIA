@@ -9,11 +9,11 @@ export const Avaliacao_diagnostica = sequelize.define('Avaliacao_diagnostica',
         primaryKey: true
        },
        enunciado: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
         allowNull: false
        },
        opcoes:{
-        type: DataTypes.ARRAY(DataTypes.STRING),
+        type: DataTypes.ARRAY(DataTypes.TEXT),
         allowNull: false
        },
        gabarito:{
@@ -24,7 +24,7 @@ export const Avaliacao_diagnostica = sequelize.define('Avaliacao_diagnostica',
         type: DataTypes.STRING
        },
        habilidade:{
-        type: DataTypes.STRING
+        type: DataTypes.TEXT
 
        },
        dificuldade:{
