@@ -141,7 +141,73 @@ export const gerarProgresso = async (req, res) => {
 };
 
 export const enviarDiagnostica = async (req, res) => {
-  res.status(501).json({ erro: "Ainda não implementado: enviarDiagnostica" });
+ try {
+  const { id } = req.params;
+  const { respostas } = req.body;
+
+  const plano = await Plano.findByPk(id);
+
+  if(!plano) {
+    return res.status(404).json({ erro: "Plano não encontrado" });
+  }
+
+  //garante que o plano é do uduário autenticado, não de outra pessoa
+  if(plano.usuarioId !== req.usuario.id) {
+    return res.status(403).json({ erro: "Esse plano não pertence a você"});
+  }
+
+  //impede o reenvio (só pode corrigir um vez, enquanto o status for 'diagnostico_gerado')
+  if(plano.status !== 'diagnostico_gerado'){
+    return res.status(409).json({
+      erro: "a diagnóstica desse plano já foi corrigida, ou ainda não foi gerada",
+    });
+  }
+
+  const questoes = await Avaliacao_diagnostica.findAll({
+    ehere: { planoId: plano.id, tipo: "diagnostica" },
+  });
+
+  //as respostas enviadas precisam bater exatamento com o conjunto de questões desse plano
+  const idsEsperados = new Set(questoes.map((q) => q.id));
+  const idsRecebidos = new Set(respostas.map((r) => r.questaoId));
+
+  const mesmoConjunto =
+      idsEsperados.size === idsRecebidos.size &&
+      [...idsEsperados].every((idEsperado) => idsRecebidos.has(idEsperado));
+ 
+    if (!mesmoConjunto) {
+      return res.status(400).json({
+        erro: "As respostas enviadas não correspondem exatamente às questões desse plano",
+      });
+    }
+
+    const respostasPorId = new Map(respostas.map((r) => [r.questaoId, r.resposta]));
+
+    const { nivel, percentual, pontosObtidos, pontosPossiveis, detalhes } = calcularNivel(
+      questoes,
+      respostasPorId
+    );
+
+    plano.status = "diagnostico_corrigido";
+    plano.nivel = nivel;
+    await plano.save();
+
+    res.status(200).json({
+      mensagem: "Diagnostica corrigida com sucesso",
+      plano: { id: plano.id, status: plano.status, nivel: plano.nivel },
+      pontuacao: {
+        acertosPonderados: pontosObtidos,
+        totalPoderado: pontosPossiveis,
+        percentual: Math.round(percentual * 100),
+      },
+      correcao: detalhes,
+    });
+ } catch (err) {
+  res.status(400).json({
+    erro:"Erro ao corrigir avaliação diagnóstica",
+    detalhes: err.message,
+  });
+ }
 };
 
 export const enviarProgresso = async (req, res) => {
